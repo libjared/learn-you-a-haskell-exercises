@@ -14,10 +14,10 @@ penultimate l = last (init l)
 
 -- Find the element at index k in list l
 -- For example: "findK 2 [0,0,1,0,0,0]" returns 1
-findK k l = undefined
+findK k l = l !! k
 
 -- Determine if list l is a palindrome
-isPalindrome l = undefined
+isPalindrome l = (reverse l) == l
 
 {-
  - Duplicate the elements in list xs, for example "duplicate [1,2,3]" would give the list [1,1,2,2,3,3]
@@ -26,7 +26,7 @@ isPalindrome l = undefined
  -
  - For example: concat [[1,2,3],[3,4,5]] returns [1,2,3,3,4,5]
  -}
-duplicate xs = undefined
+duplicate xs = concat (replicate xs)
 
 {-
  - Imitate the functinality of zip
