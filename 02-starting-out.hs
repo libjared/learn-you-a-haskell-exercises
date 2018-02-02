@@ -49,7 +49,7 @@ slice i k l = [ l !! idx | idx <- [i..pred k] ]
 
 -- Insert element x in list l at index k
 -- For example, "insertElem 2 5 [0,0,0,0,0,0]" returns [0,0,0,0,0,2,0]
-insertElem x k l = concat [take k l, [x], drop k l]
+insertElem x k l = take k l ++ (x : drop k l)
 
 -- Rotate list l n places left.
 -- For example, "rotate 2 [1,2,3,4,5]" gives [3,4,5,1,2]
