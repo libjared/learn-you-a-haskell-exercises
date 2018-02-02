@@ -26,7 +26,7 @@ isPalindrome l = (reverse l) == l
  -
  - For example: concat [[1,2,3],[3,4,5]] returns [1,2,3,3,4,5]
  -}
-duplicate xs = concat (replicate xs)
+duplicate xs = concat (replicate 2 xs)
 
 {-
  - Imitate the functinality of zip
