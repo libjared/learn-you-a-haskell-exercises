@@ -45,7 +45,7 @@ dropK k l = [ l!!i | i <- [0..pred (length l)], i /= k ]
 
 -- Extract elements between ith and kth element in list l. Including i, but not k
 -- For example, "slice 3 6 [0,0,0,1,2,3,0,0,0]" returns [1,2,3]
-slice i k l = undefined
+slice i k l = [ l !! idx | idx <- [i..pred k] ]
 
 -- Insert element x in list l at index k
 -- For example, "insertElem 2 5 [0,0,0,0,0,0]" returns [0,0,0,0,0,2,0]
