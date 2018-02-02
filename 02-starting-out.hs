@@ -37,7 +37,7 @@ ziplike xs ys = [(xs !! i, ys !! i) | i <- [0..pred (min (length xs) (length ys)
 
 -- Split a list l at element k into a tuple: The first part up to and including k, the second part after k
 -- For example "splitAtIndex 3 [1,1,1,2,2,2]" returns ([1,1,1],[2,2,2])
-splitAtIndex k l = ([l!!i | i<-[0..pred k] ],[l!!i | i<-[k..pred (length l)]])
+splitAtIndex k l = (take k l, drop k l)
 
 -- Drop the element at index k in list l
 -- For example "dropK 3 [0,0,0,1,0,0,0]" returns [0,0,0,0,0,0]
