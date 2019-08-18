@@ -26,7 +26,7 @@ isPalindrome l = reverse l == l
  -
  - For example: concat [[1,2,3],[3,4,5]] returns [1,2,3,3,4,5]
  -}
-duplicate xs = concat (replicate 2 xs)
+duplicate xs = concat [[x,x] | x <- xs]
 
 {-
  - Imitate the functinality of zip
@@ -54,3 +54,16 @@ insertElem x k l = take k l ++ (x : drop k l)
 -- Rotate list l n places left.
 -- For example, "rotate 2 [1,2,3,4,5]" gives [3,4,5,1,2]
 rotate n l = drop n l ++ take n l
+
+runTests :: Bool
+runTests =
+  penultimate [1..10] == 9 &&
+  findK 2 [0,0,1,0,0,0] == 1 &&
+  isPalindrome "racecar" &&
+  duplicate [1,2,3] == [1,1,2,2,3,3] &&
+  ziplike [1,2,3] "abcd" == [(1, 'a'), (2, 'b'), (3, 'c')] &&
+  splitAtIndex 3 [1,1,1,2,2,2] == ([1,1,1],[2,2,2]) &&
+  all (==0) (dropK 3 [0,0,0,1,0,0,0]) &&
+  slice 3 6 [0,0,0,1,2,3,0,0,0] == [1,2,3] &&
+  insertElem 2 5 [0,0,0,0,0,0] == [0,0,0,0,0,2,0] &&
+  rotate 2 [1,2,3,4,5] == [3,4,5,1,2]
