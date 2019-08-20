@@ -1,7 +1,9 @@
 -- Raise x to the power y, using recursion
 -- For example, power 5 2 = 25
 power :: Int -> Int -> Int
-power x y = undefined
+power x 0 = 1
+power x 1 = x
+power x y = x * (power x $ pred y)
 
 -- create a list of length n of the fibbonaci sequence in reverse order
 -- examples: fib 0 = [0]
@@ -9,7 +11,10 @@ power x y = undefined
 --	     fib 10 = [55,34,21,13,8,5,3,2,1,1,0]	
 -- try to use a where clause
 fib :: (Num a, Eq a) => a -> [a]
-fib x = undefined
+fib 0 = [0]
+fib 1 = [1, 0]
+fib x = nextFib:(fib (x-1))
+  where nextFib = sum $ take 2 $ fib $ x-1
 
 -- This is not recursive, but have a go anyway.
 -- Create a function which takes two parameters, a number and a step
@@ -18,7 +23,7 @@ fib x = undefined
 --			    stepReverseSign -3 1 = 4
 --			    stepReverseSign 1 2 = -3
 stepReverseSign :: (Fractional a, Ord a) => a -> a -> a
-stepReverseSign a = undefined
+stepReverseSign num step = (-num) + (signum (num)) * (-step)
 
 {- Lets calculate pi.
  - The Leibniz formula for pi (http://en.wikipedia.org/wiki/Leibniz_formula_for_%CF%80)
@@ -51,9 +56,35 @@ stepReverseSign a = undefined
  - You may find the stepReverseSign function handy
  -}
 
-piCalc :: (Fractional a, Integral b, Ord a) => a -> (a, b)
-piCalc a = undefined
+piCalc :: (Ord a, Fractional a, Num b) => a -> (a, b)
+piCalc tolerance = piCalc' 1 tolerance
 
-piCalc' :: (Ord a, Fractional a, Integral b) => a -> a -> a -> b -> (a, b)
-piCalc' w x y z = undefined
+-- = (4/1) + (4/-3) + (4/5) + (4/-7) ....
+piCalc' :: (Ord a, Fractional a, Num b) => a -> a -> (a, b)
+piCalc' denominator tolerance
+    | isBaseCase = (thisTerm, 0)
+    | otherwise = addPair (thisTerm, 1) nextTerms
+    where isBaseCase = abs thisTerm <= tolerance
+          thisTerm = 4 / denominator
+          nextTerms = piCalc' newDenominator tolerance
+          newDenominator = stepReverseSign denominator 2
 
+addPair :: (Num a, Num b) => (a, b) -> (a, b) -> (a, b)
+addPair a b = (fst a + fst b, snd a + snd b) 
+
+almostEqual :: (Ord a, Fractional a) => a -> a -> Bool
+almostEqual a b = (abs (a - b)) < 1e-14
+
+runTests :: Bool
+runTests =
+    power 5 2 == 25 &&
+    power 5 1 == 5 &&
+    power 80 4 == 40960000 &&
+    fib 0 == [0] &&
+    fib 1 == [1, 0] &&
+    fib 10 == [55, 34, 21, 13, 8, 5, 3, 2, 1, 1, 0] &&
+    stepReverseSign 6 2 == -8 &&
+    stepReverseSign (-3) 1 == 4 &&
+    stepReverseSign 1 2 == -3 &&
+    (snd $ piCalc 0.001) == 2000 &&
+    (fst $ piCalc 0.001) `almostEqual` 3.1420924036835256
