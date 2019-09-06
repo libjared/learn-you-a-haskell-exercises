@@ -31,19 +31,63 @@ evilNumbers = filter isEvil $ [0..]
 thueMorse :: [Int]
 thueMorse = map (\x -> if isEvil x then 0 else 1) [0..]
 
+-- unfortunately iterate is worthless
+-- thueMorse' :: [Int]
+-- thueMorse' = iterate thueMorseIteration' [0]
+--
+-- thueMorseIteration' :: [Int] -> [Int]
+-- thueMorseIteration' a = a ++ flippy
+--   where flippy = map notButItsAnInt a
+--         notButItsAnInt x
+--           | x == 0    = 1
+--           | otherwise = 0
+
+thueMorseFormal :: [Int]
+thueMorseFormal = map thueMorseFormalAt [0..]
+
+thueMorseFormalAt :: Int -> Int
+thueMorseFormalAt 0 = 0
+thueMorseFormalAt a
+  | even a = thueMorseFormalAt (a `div` 2)
+  | odd a  = flippy $ thueMorseFormalAt ((a-1) `div` 2)
+    where flippy b
+                    | b == 0    = 1
+                    | otherwise = 0
+
+thueMorseCustom :: [Int]
+thueMorseCustom = [0]
+
+thueMorseCustomAt :: Int -> Int
+thueMorseCustomAt 0 = 0
+
 isEvil :: Int -> Bool
 isEvil a = even $ length $ filter (==1) $ toBin a
 
--- foldl' (\acc x -> if (x==0) then ([(acc !! 0)+1, acc !! 1]) else ([acc !! 0, (acc !! 1)+1])) [0,0] $ take 20 $ evilNumbers
--- foldl' groupCount [0,0] $ take 20 $ thueMorse
--- groupCount acc x =
---   if (x == 0)
---     then ([(acc !! 0)+1, (acc !! 1)+1])
---     else ([(acc !! 0)+0, (acc !! 1)+1])
+-- creates an infinite sequence from (a function that takes a sequence and
+-- produces a sequence), and initial seed list.  this only works if that
+-- function does not change what's in the sequence already, but just appends.
+--
+-- actually no, we can't enforce that, so here:
+-- creates an infinite sequence from (a function that takes a list and produces
+-- another list to be appended), and the initial seed list.
+--
+-- example: eateration (\s -> [(last $ init s) + (last s)]) [0,1]
+-- [0,1,1,2,3,5,8...]
+-- eateration :: ([Int] -> [Int]) -> [Int] -> [Int]
+-- eateration createNextChunk seed =
+--
+-- I feel like I can use a fold for this.
+-- I might be able to, but I expect it to involve nested lists. since it's
+-- infinite, IDK if I can get away with that.
+-- it would have to be a right fold since I am working upwards, and the
+-- recursion (is it recursion?) would be infinite on purpose
 
 -- get fairness of 1s vs 0s in a list. fair means 0.0. unfair favoring 0 is -1.0, unfair favoring 1 is 1.0.
-probability :: [Int] -> Bool
-probability a = count wins
+--probability :: [Int] -> Float
+probability a = (wins/total) - (losses/total)
+  where total = fromIntegral $ length a
+        wins  = fromIntegral $ length $ filter (==1) a
+        losses= fromIntegral $ length $ filter (==0) a
 
 runTests :: Bool
 runTests =
@@ -52,4 +96,9 @@ runTests =
   toBin 255 == [1,1,1,1, 1,1,1,1] &&
   isEvil 39 &&
   not (isEvil 7) &&
-  take 10 evilNumbers == [0, 3, 5, 6, 9, 10, 12, 15, 17, 18]
+  take 10 evilNumbers == [0, 3, 5, 6, 9, 10, 12, 15, 17, 18] &&
+  take 10 thueMorse == [0, 1, 1, 0, 1, 0, 0, 1, 1, 0] &&
+  probability [0,0,0] == -1.0 &&
+  probability [1,1,1] == 1.0 &&
+  probability [1,0,1] == (2/3)-(1/3) &&
+  take 500 thueMorse == take 500 thueMorseFormal
